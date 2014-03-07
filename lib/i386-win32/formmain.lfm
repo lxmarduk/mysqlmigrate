@@ -1,0 +1,436 @@
+object MainFrom: TMainFrom
+  Left = 279
+  Height = 727
+  Top = 126
+  Width = 642
+  BorderStyle = bsDialog
+  Caption = 'MainFrom'
+  ClientHeight = 727
+  ClientWidth = 642
+  OnCreate = FormCreate
+  LCLVersion = '1.2.0.3'
+  object chlDatabases: TCheckListBox
+    Left = 16
+    Height = 328
+    Top = 192
+    Width = 304
+    Anchors = [akTop, akLeft, akRight, akBottom]
+    ItemHeight = 0
+    PopupMenu = dbPopup
+    TabOrder = 0
+  end
+  object Label1: TLabel
+    Left = 24
+    Height = 15
+    Top = 168
+    Width = 109
+    Caption = 'Databases to import:'
+    ParentColor = False
+  end
+  object chlUsers: TCheckListBox
+    Left = 328
+    Height = 328
+    Top = 192
+    Width = 304
+    Anchors = [akTop, akRight, akBottom]
+    ItemHeight = 0
+    PopupMenu = usersPopup
+    TabOrder = 1
+  end
+  object Label2: TLabel
+    Left = 328
+    Height = 15
+    Top = 168
+    Width = 84
+    Caption = 'Users to import:'
+    ParentColor = False
+  end
+  object Memo1: TMemo
+    Left = 16
+    Height = 141
+    Top = 576
+    Width = 616
+    Anchors = [akLeft, akRight, akBottom]
+    Font.CharSet = RUSSIAN_CHARSET
+    Font.Height = -13
+    Font.Name = 'Courier'
+    Font.Pitch = fpFixed
+    Font.Quality = fqDraft
+    ParentFont = False
+    ReadOnly = True
+    ScrollBars = ssAutoBoth
+    TabOrder = 2
+    WordWrap = False
+  end
+  object edSrcHost: TEdit
+    Left = 79
+    Height = 23
+    Top = 24
+    Width = 111
+    TabOrder = 3
+    Text = '127.0.0.1'
+  end
+  object edSrcUser: TEdit
+    Left = 79
+    Height = 23
+    Top = 56
+    Width = 111
+    TabOrder = 4
+    Text = 'root'
+  end
+  object edSrcPass: TEdit
+    Left = 79
+    Height = 23
+    Top = 88
+    Width = 111
+    EchoMode = emPassword
+    PasswordChar = '*'
+    TabOrder = 5
+  end
+  object edSrcDB: TEdit
+    Left = 79
+    Height = 23
+    Top = 120
+    Width = 111
+    TabOrder = 6
+    Text = 'mysql'
+  end
+  object Label3: TLabel
+    Left = 24
+    Height = 15
+    Top = 28
+    Width = 28
+    Caption = 'Host:'
+    ParentColor = False
+  end
+  object Label4: TLabel
+    Left = 24
+    Height = 15
+    Top = 60
+    Width = 26
+    Caption = 'User:'
+    ParentColor = False
+  end
+  object Label5: TLabel
+    Left = 24
+    Height = 15
+    Top = 92
+    Width = 53
+    Caption = 'Password:'
+    ParentColor = False
+  end
+  object Label6: TLabel
+    Left = 24
+    Height = 15
+    Top = 124
+    Width = 51
+    Caption = 'Database:'
+    ParentColor = False
+  end
+  object spSrcPort: TSpinEdit
+    Left = 192
+    Height = 23
+    Top = 24
+    Width = 72
+    MaxValue = 65535
+    TabOrder = 7
+    Value = 3306
+  end
+  object edDstHost: TEdit
+    Left = 383
+    Height = 23
+    Top = 24
+    Width = 111
+    TabOrder = 8
+    Text = '127.0.0.1'
+  end
+  object edDstUser: TEdit
+    Left = 383
+    Height = 23
+    Top = 56
+    Width = 111
+    TabOrder = 9
+    Text = 'root'
+  end
+  object edDstPass: TEdit
+    Left = 383
+    Height = 23
+    Top = 88
+    Width = 111
+    EchoMode = emPassword
+    PasswordChar = '*'
+    TabOrder = 10
+  end
+  object edDstDB: TEdit
+    Left = 383
+    Height = 23
+    Top = 120
+    Width = 111
+    TabOrder = 11
+    Text = 'mysql'
+  end
+  object Label7: TLabel
+    Left = 328
+    Height = 15
+    Top = 28
+    Width = 28
+    Caption = 'Host:'
+    ParentColor = False
+  end
+  object Label8: TLabel
+    Left = 328
+    Height = 15
+    Top = 60
+    Width = 26
+    Caption = 'User:'
+    ParentColor = False
+  end
+  object Label9: TLabel
+    Left = 328
+    Height = 15
+    Top = 92
+    Width = 53
+    Caption = 'Password:'
+    ParentColor = False
+  end
+  object Label10: TLabel
+    Left = 328
+    Height = 15
+    Top = 124
+    Width = 51
+    Caption = 'Database:'
+    ParentColor = False
+  end
+  object spDstPort: TSpinEdit
+    Left = 496
+    Height = 23
+    Top = 24
+    Width = 72
+    MaxValue = 65535
+    TabOrder = 12
+    Value = 3306
+  end
+  object ProgressBar1: TProgressBar
+    Left = 16
+    Height = 20
+    Top = 552
+    Width = 614
+    Smooth = True
+    Step = 1
+    TabOrder = 13
+  end
+  object reloadDatabases: TSpeedButton
+    Left = 297
+    Height = 22
+    Top = 161
+    Width = 23
+    Glyph.Data = {
+      36040000424D3604000000000000360000002800000010000000100000000100
+      2000000000000004000064000000640000000000000000000000FFFFFF00A465
+      34A2A4653401FFFFFF00FFFFFF00A4653405A4653453A76A3ABEA66938E9A466
+      35FAA76A3AE4A76B3BAAA4653424FFFFFF00FFFFFF00FFFFFF00FFFFFF00A465
+      34FFA5673693FFFFFF00A4653454A66737EEB58055F3CEA684FFD8B697FFDBB9
+      99FFD3AC8AFFC2946DFCA66838F6A466355BFFFFFF00FFFFFF00FFFFFF00A567
+      37FEB7845BF7A56736D4B17A4EF4E3CAB4FFECDAC9FFE7D1BCFFE3C9B0FFDEBE
+      A0FFD2AB88FFCEA582FFD3AE8EFFA66838F5A465342AFFFFFF00FFFFFF00A668
+      38FDF1E4D8FFD4B295FEF4E9E0FFF3E8DDFFEDDCCCFFD2AD8FFEB0784CF5A566
+      35FBA66939FFA66939FEA96D3DFFB0784CFFA76A3AA8FFFFFF00FFFFFF00A567
+      37FDF6EEE6FFF5ECE3FFF5EDE4FFE6D2C1FFB0794DF5A66938CAA4653436FFFF
+      FF00A465346AA96B3CEDB67C4FFFA76A3AFEA56837FAFFFFFF00FFFFFF00A466
+      35FCF6EEE6FFEBD7C4FFEAD9C9FFA46534FEA465346AFFFFFF00FFFFFF00FFFF
+      FF00A465340BA56635E9C9956C8DB77F53C2A46534FFA4653405FFFFFF00A465
+      34FCF5EDE5FFF6EDE5FFF5ECE4FFD7B79CFDA66837E0A4653410FFFFFF00FFFF
+      FF00FFFFFF00FFFFFF00D5A47E1ACD997239A46534FCA465340CFFFFFF00A465
+      34F9A46534FEA46534FEA46534FDA46534FCA46534FBA46534B9A465341DA465
+      3418A4653418A4653418A4653418A4653418A465341CFFFFFF00FFFFFF00A465
+      340DFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00A46534A0A465
+      34FFAD7447F8AF774CF7AF774CF7AF784CF7A46534FFA4653408FFFFFF00A465
+      34FCB3794C7ECF9D762BBB835713A4653402FFFFFF00FFFFFF00A4653404A668
+      38C4D0AC8FFAF6EEE7FFF2E6DBFFF6EEE6FFA66A3AFBA4653409FFFFFF00A465
+      35FEA76A3AFBC791689DA56737E6A4653423FFFFFF00FFFFFF00FFFFFF00A465
+      3460A46635FFE9D7C7FFEBD8C6FFF5ECE3FFA66A3AFAA465340AFFFFFF00A668
+      38F3AB7041FFA96C3CFEA76A3AF5A4653475A4653419A4653445A66938CDB988
+      61F5EBDBCDFFF5EBE2FFF6EEE6FFF6EEE6FFA76A3AFAA465340BFFFFFF00A769
+      399BC09069FDC59872FFA86B3CFFA46635FFA76A3AFCB7855DF3D9BBA1FEF1E4
+      D8FFF2E6DBFFF3E8DDFFCEA788FDEAD8C8FFA76A3AF9A465340DFFFFFF00A465
+      3429A66939F5D3AD8CFFDCBD9DFFDDBEA1FFE5CBB4FFE9D3BFFFEEDDCCFFF0E2
+      D5FFE7D2BFFFAF774BF5A56736C0AB7143F7A46635FCA465340EFFFFFF00FFFF
+      FF00A4653550A66838F6C09068FAD3B08FFFDFC2A8FFDEC1A8FFD4B193FFB987
+      5FF4A56737F0A4653458FFFFFF00A4663566A46534FFA465340FFFFFFF00FFFF
+      FF00FFFFFF00A465341DA7693A9FA76A3ADEA56736F6A76939E5A76A3ABCA465
+      3453A4653405FFFFFF00FFFFFF00FFFFFF00A4653479A4653410
+    }
+    OnClick = reloadDatabasesClick
+  end
+  object reloadUsers: TSpeedButton
+    Left = 607
+    Height = 22
+    Top = 161
+    Width = 23
+    Glyph.Data = {
+      36040000424D3604000000000000360000002800000010000000100000000100
+      2000000000000004000064000000640000000000000000000000FFFFFF00A465
+      34A2A4653401FFFFFF00FFFFFF00A4653405A4653453A76A3ABEA66938E9A466
+      35FAA76A3AE4A76B3BAAA4653424FFFFFF00FFFFFF00FFFFFF00FFFFFF00A465
+      34FFA5673693FFFFFF00A4653454A66737EEB58055F3CEA684FFD8B697FFDBB9
+      99FFD3AC8AFFC2946DFCA66838F6A466355BFFFFFF00FFFFFF00FFFFFF00A567
+      37FEB7845BF7A56736D4B17A4EF4E3CAB4FFECDAC9FFE7D1BCFFE3C9B0FFDEBE
+      A0FFD2AB88FFCEA582FFD3AE8EFFA66838F5A465342AFFFFFF00FFFFFF00A668
+      38FDF1E4D8FFD4B295FEF4E9E0FFF3E8DDFFEDDCCCFFD2AD8FFEB0784CF5A566
+      35FBA66939FFA66939FEA96D3DFFB0784CFFA76A3AA8FFFFFF00FFFFFF00A567
+      37FDF6EEE6FFF5ECE3FFF5EDE4FFE6D2C1FFB0794DF5A66938CAA4653436FFFF
+      FF00A465346AA96B3CEDB67C4FFFA76A3AFEA56837FAFFFFFF00FFFFFF00A466
+      35FCF6EEE6FFEBD7C4FFEAD9C9FFA46534FEA465346AFFFFFF00FFFFFF00FFFF
+      FF00A465340BA56635E9C9956C8DB77F53C2A46534FFA4653405FFFFFF00A465
+      34FCF5EDE5FFF6EDE5FFF5ECE4FFD7B79CFDA66837E0A4653410FFFFFF00FFFF
+      FF00FFFFFF00FFFFFF00D5A47E1ACD997239A46534FCA465340CFFFFFF00A465
+      34F9A46534FEA46534FEA46534FDA46534FCA46534FBA46534B9A465341DA465
+      3418A4653418A4653418A4653418A4653418A465341CFFFFFF00FFFFFF00A465
+      340DFFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00FFFFFF00A46534A0A465
+      34FFAD7447F8AF774CF7AF774CF7AF784CF7A46534FFA4653408FFFFFF00A465
+      34FCB3794C7ECF9D762BBB835713A4653402FFFFFF00FFFFFF00A4653404A668
+      38C4D0AC8FFAF6EEE7FFF2E6DBFFF6EEE6FFA66A3AFBA4653409FFFFFF00A465
+      35FEA76A3AFBC791689DA56737E6A4653423FFFFFF00FFFFFF00FFFFFF00A465
+      3460A46635FFE9D7C7FFEBD8C6FFF5ECE3FFA66A3AFAA465340AFFFFFF00A668
+      38F3AB7041FFA96C3CFEA76A3AF5A4653475A4653419A4653445A66938CDB988
+      61F5EBDBCDFFF5EBE2FFF6EEE6FFF6EEE6FFA76A3AFAA465340BFFFFFF00A769
+      399BC09069FDC59872FFA86B3CFFA46635FFA76A3AFCB7855DF3D9BBA1FEF1E4
+      D8FFF2E6DBFFF3E8DDFFCEA788FDEAD8C8FFA76A3AF9A465340DFFFFFF00A465
+      3429A66939F5D3AD8CFFDCBD9DFFDDBEA1FFE5CBB4FFE9D3BFFFEEDDCCFFF0E2
+      D5FFE7D2BFFFAF774BF5A56736C0AB7143F7A46635FCA465340EFFFFFF00FFFF
+      FF00A4653550A66838F6C09068FAD3B08FFFDFC2A8FFDEC1A8FFD4B193FFB987
+      5FF4A56737F0A4653458FFFFFF00A4663566A46534FFA465340FFFFFFF00FFFF
+      FF00FFFFFF00A465341DA7693A9FA76A3ADEA56736F6A76939E5A76A3ABCA465
+      3453A4653405FFFFFF00FFFFFF00FFFFFF00A4653479A4653410
+    }
+    OnClick = reloadUsersClick
+  end
+  object Label11: TLabel
+    Left = 24
+    Height = 25
+    Top = 0
+    Width = 120
+    Caption = 'Source Server:'
+    Font.Height = -19
+    ParentColor = False
+    ParentFont = False
+  end
+  object Label12: TLabel
+    Left = 383
+    Height = 25
+    Top = 0
+    Width = 158
+    Caption = 'Destination Server:'
+    Font.Height = -19
+    ParentColor = False
+    ParentFont = False
+  end
+  object Button2: TButton
+    Left = 128
+    Height = 25
+    Top = 520
+    Width = 75
+    Caption = 'Export DBs'
+    OnClick = Button2Click
+    TabOrder = 14
+  end
+  object Button3: TButton
+    Left = 440
+    Height = 25
+    Top = 520
+    Width = 75
+    Caption = 'Export users'
+    OnClick = Button3Click
+    TabOrder = 15
+  end
+  object Button1: TButton
+    Left = 504
+    Height = 25
+    Top = 118
+    Width = 120
+    Caption = 'Test connection'
+    OnClick = Button1Click
+    TabOrder = 16
+  end
+  object Button4: TButton
+    Left = 200
+    Height = 25
+    Top = 118
+    Width = 120
+    Caption = 'Test connection'
+    OnClick = Button4Click
+    TabOrder = 17
+  end
+  object SourceQ: TSQLQuery
+    FieldDefs = <>
+    Database = SourceDB
+    Transaction = SourceT
+    Params = <>
+    left = 144
+    top = 152
+  end
+  object SourceT: TSQLTransaction
+    Active = False
+    Action = caNone
+    Database = SourceDB
+    left = 184
+    top = 152
+  end
+  object SourceDB: TMySQL55Connection
+    Connected = False
+    LoginPrompt = False
+    KeepConnection = False
+    Transaction = SourceT
+    LogEvents = []
+    left = 232
+    top = 152
+  end
+  object dbPopup: TPopupMenu
+    left = 48
+    top = 216
+    object miSelectAllDB: TMenuItem
+      Caption = 'Select all'
+      OnClick = miSelectAllDBClick
+    end
+    object miDeselectAllDB: TMenuItem
+      Caption = 'Select none'
+      OnClick = miDeselectAllDBClick
+    end
+  end
+  object usersPopup: TPopupMenu
+    left = 355
+    top = 216
+    object miSelectAllUsers: TMenuItem
+      Caption = 'Select all'
+      OnClick = miSelectAllUsersClick
+    end
+    object miDeselectAllUsers: TMenuItem
+      Caption = 'Select none'
+      OnClick = miDeselectAllUsersClick
+    end
+  end
+  object DestinationQ: TSQLQuery
+    FieldDefs = <>
+    Database = DestinationDB
+    Transaction = DestinationT
+    Params = <>
+    left = 433
+    top = 152
+  end
+  object DestinationT: TSQLTransaction
+    Active = False
+    Action = caNone
+    Database = DestinationDB
+    left = 504
+    top = 152
+  end
+  object DestinationDB: TMySQL55Connection
+    Connected = False
+    LoginPrompt = False
+    KeepConnection = False
+    Transaction = DestinationT
+    LogEvents = []
+    left = 571
+    top = 152
+  end
+end
