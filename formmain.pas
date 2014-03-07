@@ -19,23 +19,19 @@ type
     Button4: TButton;
     chlDatabases: TCheckListBox;
     chlUsers: TCheckListBox;
-    edDstDB: TEdit;
     edSrcHost: TEdit;
     edDstHost: TEdit;
     edDstPass: TEdit;
     edSrcUser: TEdit;
     edSrcPass: TEdit;
-    edSrcDB: TEdit;
     edDstUser: TEdit;
     Label1: TLabel;
-    Label10: TLabel;
     Label11: TLabel;
     Label12: TLabel;
     Label2: TLabel;
     Label3: TLabel;
     Label4: TLabel;
     Label5: TLabel;
-    Label6: TLabel;
     Label7: TLabel;
     Label8: TLabel;
     Label9: TLabel;
@@ -185,10 +181,12 @@ begin
   except
     on e: Exception do
     begin
+      Log('Fail to connect.');
+      Log(e.Message);
       exit;
     end;
   end;
-  Log('Connection established.');
+  Log('Connection working propertly.');
 end;
 
 procedure TMainFrom.Button3Click(Sender: TObject);
@@ -244,10 +242,12 @@ begin
   except
     on e: Exception do
     begin
+      Log('Fail to connect.');
+      Log(e.Message);
       exit;
     end;
   end;
-  Log('Connection established.');
+  Log('Connection working propertly.');
 end;
 
 procedure TMainFrom.reloadDatabasesClick(Sender: TObject);
@@ -280,49 +280,63 @@ end;
 
 procedure TMainFrom.LoadDatabases;
 begin
-  SourceQ.SQL.Text := 'SHOW DATABASES;';
-  SourceQ.Open;
-  SourceQ.First;
-  chlDatabases.Items.Clear;
-  Log('Getting databases...');
-  while not SourceQ.EOF do
-  begin
-    chlDatabases.Items.Add(SourceQ['Database']);
-    Log(SourceQ['Database']);
-    Application.ProcessMessages;
-    SourceQ.Next;
+  try
+    SourceQ.SQL.Text := 'SHOW DATABASES;';
+    SourceQ.Open;
+    SourceQ.First;
+    chlDatabases.Items.Clear;
+    while not SourceQ.EOF do
+    begin
+      chlDatabases.Items.Add(SourceQ['Database']);
+      Application.ProcessMessages;
+      SourceQ.Next;
+    end;
+    SourceQ.Close;
+  except
+    on e: Exception do
+    begin
+      Log(e.Message);
+      exit;
+    end;
   end;
-  SourceQ.Close;
 end;
 
 procedure TMainFrom.LoadUsers;
 begin
-  Log('Getting users...');
-  SourceQ.SQL.Text := 'SELECT user, host FROM user WHERE user != '''';';
-  SourceQ.Open;
-  SourceQ.First;
-  chlUsers.Items.Clear;
-  while not SourceQ.EOF do
-  begin
-    chlUsers.Items.Add(SourceQ['user'] + '@' + SourceQ['host']);
-    Log(SourceQ['user'] + '@' + SourceQ['host']);
-    Application.ProcessMessages;
-    SourceQ.Next;
+  try
+    SourceQ.SQL.Text := 'SELECT user, host FROM mysql.user WHERE user != '''';';
+    SourceQ.Open;
+    SourceQ.First;
+    chlUsers.Items.Clear;
+    while not SourceQ.EOF do
+    begin
+      chlUsers.Items.Add(SourceQ['user'] + '@' + SourceQ['host']);
+      Application.ProcessMessages;
+      SourceQ.Next;
+    end;
+    SourceQ.Close;
+  except
+    on e: Exception do
+    begin
+      Log(e.Message);
+      exit;
+    end;
   end;
-  SourceQ.Close;
 end;
 
 procedure TMainFrom.ConnectToSource;
 begin
-  SourceDB.DatabaseName := edSrcDB.Text;
+  SourceDB.DatabaseName := 'mysql';
   SourceDB.UserName := edSrcUser.Text;
   SourceDB.Password := edSrcPass.Text;
   SourceDB.HostName := edSrcHost.Text;
   SourceDB.Port := spSrcPort.Value;
 
   try
+    Log('Connecting ' + SourceDB.HostName + ':' + IntToStr(SourceDB.Port));
     SourceDB.Connected := True;
     SourceT.Active := True;
+    Log('Connected.');
   except
     on e: Exception do
     begin
@@ -336,18 +350,21 @@ procedure TMainFrom.DisconnectSource;
 begin
   SourceT.Active := False;
   SourceDB.Connected := False;
+  Log('Disconnected.');
 end;
 
 procedure TMainFrom.ConnectToDestination;
 begin
-  DestinationDB.DatabaseName := edDstDB.Text;
+  DestinationDB.DatabaseName := 'mysql';
   DestinationDB.UserName := edDstUser.Text;
   DestinationDB.Password := edDstPass.Text;
   DestinationDB.HostName := edDstHost.Text;
   DestinationDB.Port := spDstPort.Value;
   try
+    Log('Connecting ' + DestinationDB.HostName + ':' + IntToStr(DestinationDB.Port));
     DestinationDB.Connected := True;
     DestinationT.Active := True;
+    Log('Connected.');
   except
     on e: Exception do
     begin
@@ -362,6 +379,7 @@ begin
   DestinationT.Commit;
   DestinationDB.Connected := False;
   DestinationT.Active := False;
+  Log('Disconnected.');
 end;
 
 procedure TMainFrom.ExportDB(dbName: string);
