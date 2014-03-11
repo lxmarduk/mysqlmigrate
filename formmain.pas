@@ -78,7 +78,7 @@ type
 
     procedure ExportDB(dbName: string);
     procedure ExportUser(grantQ: string);
-    function GetUserGrants(user: string): string;
+    function GetUserGrants(user: string; host: string): string;
 
     function GetCheckedItemsCount(c: TCheckListBox): integer;
 
@@ -194,6 +194,7 @@ var
   SelectedUsersCount: integer;
   ItemsCount: integer;
   i: integer;
+  user, host, s: String;
 begin
   try
     SelectedUsersCount := GetCheckedItemsCount(chlUsers);
@@ -210,7 +211,10 @@ begin
       begin
         if (chlUsers.Checked[i]) then
         begin
-          ExportUser(GetUserGrants(chlUsers.Items[i]));
+          s := chlUsers.Items[i];
+          user := Copy(s, 0, Pos('@', s) - 1);
+          host := Copy(s, Pos('@', s) + 1, Length(s));
+          ExportUser(GetUserGrants(user, host));
           Log('Exported ' + chlUsers.Items[i]);
           ProgressBar1.Position := ProgressBar1.Position + 1;
           Application.ProcessMessages;
@@ -412,12 +416,12 @@ begin
   end;
 end;
 
-function TMainFrom.GetUserGrants(user: string): string;
+function TMainFrom.GetUserGrants(user: string; host: string): string;
 begin
-  SourceQ.SQL.Text := 'SHOW GRANTS FOR ' + user;
+  SourceQ.SQL.Text := 'SHOW GRANTS FOR ' + user + '@' + host;
   try
     SourceQ.Open;
-    Result := SourceQ['Grants for ' + user];
+    Result := SourceQ['Grants for ' + user + '@' + host + ''];
     SourceQ.Close;
   except
     on e: Exception do
