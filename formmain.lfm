@@ -8,6 +8,7 @@ object MainFrom: TMainFrom
   ClientHeight = 727
   ClientWidth = 642
   OnCreate = FormCreate
+  OnDestroy = FormDestroy
   LCLVersion = '1.2.0.3'
   object chlDatabases: TCheckListBox
     Left = 16

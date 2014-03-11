@@ -58,6 +58,7 @@ type
     procedure Button3Click(Sender: TObject);
     procedure Button4Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
     procedure miDeselectAllDBClick(Sender: TObject);
     procedure miDeselectAllUsersClick(Sender: TObject);
     procedure miSelectAllDBClick(Sender: TObject);
@@ -66,6 +67,7 @@ type
     procedure reloadUsersClick(Sender: TObject);
   private
     { private declarations }
+
     procedure Log(s: string);
 
     procedure LoadDatabases;
@@ -81,7 +83,6 @@ type
     function GetUserGrants(user: string; host: string): string;
 
     function GetCheckedItemsCount(c: TCheckListBox): integer;
-
   public
     { public declarations }
   end;
@@ -105,6 +106,11 @@ begin
   except
     exit;
   end;
+end;
+
+procedure TMainFrom.FormDestroy(Sender: TObject);
+begin
+
 end;
 
 procedure TMainFrom.miDeselectAllDBClick(Sender: TObject);
@@ -194,7 +200,7 @@ var
   SelectedUsersCount: integer;
   ItemsCount: integer;
   i: integer;
-  user, host, s: String;
+  user, host, s: string;
 begin
   try
     SelectedUsersCount := GetCheckedItemsCount(chlUsers);
@@ -418,7 +424,7 @@ end;
 
 function TMainFrom.GetUserGrants(user: string; host: string): string;
 begin
-  SourceQ.SQL.Text := 'SHOW GRANTS FOR ' + user + '@' + host;
+  SourceQ.SQL.Text := 'SHOW GRANTS FOR ''' + user + '''@''' + host + '''';
   try
     SourceQ.Open;
     Result := SourceQ['Grants for ' + user + '@' + host + ''];
