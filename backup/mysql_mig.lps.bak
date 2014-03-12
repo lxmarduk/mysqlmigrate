@@ -21,8 +21,8 @@
         <IsVisibleTab Value="True"/>
         <EditorIndex Value="0"/>
         <WindowIndex Value="0"/>
-        <TopLine Value="195"/>
-        <CursorPos X="46" Y="214"/>
+        <TopLine Value="397"/>
+        <CursorPos X="22" Y="421"/>
         <UsageCount Value="26"/>
         <Loaded Value="True"/>
         <LoadedDesigner Value="True"/>
@@ -129,107 +129,127 @@
     <General>
       <ActiveWindowIndexAtStart Value="0"/>
     </General>
-    <JumpHistory Count="25" HistoryIndex="24">
+    <JumpHistory Count="30" HistoryIndex="29">
       <Position1>
         <Filename Value="formmain.pas"/>
-        <Caret Line="147" Column="1" TopLine="122"/>
+        <Caret Line="351" Column="1" TopLine="333"/>
       </Position1>
       <Position2>
         <Filename Value="formmain.pas"/>
-        <Caret Line="148" Column="1" TopLine="122"/>
+        <Caret Line="352" Column="1" TopLine="333"/>
       </Position2>
       <Position3>
         <Filename Value="formmain.pas"/>
-        <Caret Line="149" Column="1" TopLine="135"/>
+        <Caret Line="353" Column="1" TopLine="333"/>
       </Position3>
       <Position4>
         <Filename Value="formmain.pas"/>
-        <Caret Line="151" Column="1" TopLine="135"/>
+        <Caret Line="354" Column="1" TopLine="333"/>
       </Position4>
       <Position5>
         <Filename Value="formmain.pas"/>
-        <Caret Line="153" Column="1" TopLine="135"/>
+        <Caret Line="355" Column="1" TopLine="333"/>
       </Position5>
       <Position6>
         <Filename Value="formmain.pas"/>
-        <Caret Line="352" Column="25" TopLine="336"/>
+        <Caret Line="363" Column="1" TopLine="335"/>
       </Position6>
       <Position7>
         <Filename Value="formmain.pas"/>
-        <Caret Line="139" Column="1" TopLine="131"/>
+        <Caret Line="154" Column="1" TopLine="138"/>
       </Position7>
       <Position8>
         <Filename Value="formmain.pas"/>
-        <Caret Line="153" Column="1" TopLine="131"/>
+        <Caret Line="155" Column="1" TopLine="138"/>
       </Position8>
       <Position9>
         <Filename Value="formmain.pas"/>
-        <Caret Line="355" Column="23" TopLine="340"/>
+        <Caret Line="156" Column="1" TopLine="138"/>
       </Position9>
       <Position10>
         <Filename Value="formmain.pas"/>
-        <Caret Line="153" Column="1" TopLine="137"/>
+        <Caret Line="151" Column="1" TopLine="138"/>
       </Position10>
       <Position11>
         <Filename Value="formmain.pas"/>
-        <Caret Line="351" Column="1" TopLine="333"/>
+        <Caret Line="159" Column="1" TopLine="138"/>
       </Position11>
       <Position12>
         <Filename Value="formmain.pas"/>
-        <Caret Line="352" Column="1" TopLine="333"/>
+        <Caret Line="175" Column="1" TopLine="158"/>
       </Position12>
       <Position13>
         <Filename Value="formmain.pas"/>
-        <Caret Line="353" Column="1" TopLine="333"/>
+        <Caret Line="176" Column="1" TopLine="158"/>
       </Position13>
       <Position14>
         <Filename Value="formmain.pas"/>
-        <Caret Line="354" Column="1" TopLine="333"/>
+        <Caret Line="163" Column="31" TopLine="143"/>
       </Position14>
       <Position15>
         <Filename Value="formmain.pas"/>
-        <Caret Line="355" Column="1" TopLine="333"/>
+        <Caret Line="154" Column="50" TopLine="143"/>
       </Position15>
       <Position16>
         <Filename Value="formmain.pas"/>
-        <Caret Line="363" Column="1" TopLine="335"/>
+        <Caret Line="214" Column="29" TopLine="197"/>
       </Position16>
       <Position17>
         <Filename Value="formmain.pas"/>
-        <Caret Line="154" Column="1" TopLine="138"/>
+        <Caret Line="360" Column="7" TopLine="386"/>
       </Position17>
       <Position18>
         <Filename Value="formmain.pas"/>
-        <Caret Line="155" Column="1" TopLine="138"/>
+        <Caret Line="205" Column="3" TopLine="198"/>
       </Position18>
       <Position19>
         <Filename Value="formmain.pas"/>
-        <Caret Line="156" Column="1" TopLine="138"/>
+        <Caret Line="416" Column="3" TopLine="413"/>
       </Position19>
       <Position20>
         <Filename Value="formmain.pas"/>
-        <Caret Line="151" Column="1" TopLine="138"/>
+        <Caret Line="223" Column="32" TopLine="198"/>
       </Position20>
       <Position21>
         <Filename Value="formmain.pas"/>
-        <Caret Line="159" Column="1" TopLine="138"/>
+        <Caret Line="429" Column="72" TopLine="422"/>
       </Position21>
       <Position22>
         <Filename Value="formmain.pas"/>
-        <Caret Line="175" Column="1" TopLine="158"/>
+        <Caret Line="83" Column="57" TopLine="66"/>
       </Position22>
       <Position23>
         <Filename Value="formmain.pas"/>
-        <Caret Line="176" Column="1" TopLine="158"/>
+        <Caret Line="419" Column="3" TopLine="403"/>
       </Position23>
       <Position24>
         <Filename Value="formmain.pas"/>
-        <Caret Line="163" Column="31" TopLine="143"/>
+        <Caret Line="418" Column="1" TopLine="414"/>
       </Position24>
       <Position25>
         <Filename Value="formmain.pas"/>
-        <Caret Line="154" Column="50" TopLine="143"/>
+        <Caret Line="429" Column="26" TopLine="414"/>
       </Position25>
+      <Position26>
+        <Filename Value="formmain.pas"/>
+        <Caret Line="416" Column="19" TopLine="404"/>
+      </Position26>
+      <Position27>
+        <Filename Value="formmain.pas"/>
+        <Caret Line="223" Column="15" TopLine="206"/>
+      </Position27>
+      <Position28>
+        <Filename Value="formmain.pas"/>
+        <Caret Line="82" Column="45" TopLine="65"/>
+      </Position28>
+      <Position29>
+        <Filename Value="formmain.pas"/>
+        <Caret Line="414" Column="51" TopLine="397"/>
+      </Position29>
+      <Position30>
+        <Filename Value="formmain.pas"/>
+        <Caret Line="418" Column="13" TopLine="397"/>
+      </Position30>
     </JumpHistory>
   </ProjectSession>
   <Debugging>
@@ -239,7 +259,7 @@
         <WatchScope Value="wpsLocal"/>
         <WatchKind Value="wpkWrite"/>
         <Source Value="formmain.pas"/>
-        <Line Value="368"/>
+        <Line Value="421"/>
       </Item1>
     </BreakPoints>
   </Debugging>

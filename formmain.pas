@@ -79,8 +79,8 @@ type
     procedure DisconnectDestination;
 
     procedure ExportDB(dbName: string);
-    procedure ExportUser(grantQ: string);
-    function GetUserGrants(user: string; host: string): string;
+    procedure ExportUser(grantQ: TStringList);
+    function GetUserGrants(user: string; host: string): TStringList;
 
     function GetCheckedItemsCount(c: TCheckListBox): integer;
   public
@@ -226,6 +226,10 @@ begin
           Application.ProcessMessages;
         end;
       end;
+      DestinationQ.Close;
+      DestinationQ.SQL.Text := 'FLUSH PRIVILEGES;';
+      DestinationQ.ExecSQL;
+      DestinationQ.Close;
       DisconnectDestination;
     except
       on e: Exception do
@@ -407,12 +411,18 @@ begin
   end;
 end;
 
-procedure TMainFrom.ExportUser(grantQ: string);
+procedure TMainFrom.ExportUser(grantQ: TStringList);
+var i: Integer;
+    s: String;
 begin
-  DestinationQ.SQL.Text := grantQ;
   try
-    DestinationQ.ExecSQL;
-    DestinationQ.Close;
+    for i := 0 to grantQ.Count - 1 do
+    begin
+      s := grantQ[i];
+      DestinationQ.SQL.Text := s;
+      DestinationQ.ExecSQL;
+      DestinationQ.Close;
+    end;
   except
     on e: Exception do
     begin
@@ -422,12 +432,18 @@ begin
   end;
 end;
 
-function TMainFrom.GetUserGrants(user: string; host: string): string;
+function TMainFrom.GetUserGrants(user: string; host: string): TStringList;
 begin
+  Result := TStringList.Create;
   SourceQ.SQL.Text := 'SHOW GRANTS FOR ''' + user + '''@''' + host + '''';
   try
     SourceQ.Open;
-    Result := SourceQ['Grants for ' + user + '@' + host + ''];
+    while not SourceQ.EOF do
+    begin
+      Result.Add(SourceQ['Grants for ' + user + '@' + host + ''] + ';');
+      Application.ProcessMessages;
+      SourceQ.Next;
+    end;
     SourceQ.Close;
   except
     on e: Exception do

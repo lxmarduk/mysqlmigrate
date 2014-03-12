@@ -9,6 +9,7 @@ object MainFrom: TMainFrom
   ClientWidth = 642
   OnCreate = FormCreate
   OnDestroy = FormDestroy
+  Position = poDefaultPosOnly
   LCLVersion = '1.2.0.3'
   object chlDatabases: TCheckListBox
     Left = 16
