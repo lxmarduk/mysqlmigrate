@@ -19,9 +19,9 @@ type
     Button4: TButton;
     chlDatabases: TCheckListBox;
     chlUsers: TCheckListBox;
-    edSrcHost: TEdit;
-    edDstHost: TEdit;
+    edSrcHost: TComboBox;
     edDstPass: TEdit;
+    edDstHost: TComboBox;
     edSrcUser: TEdit;
     edSrcPass: TEdit;
     edDstUser: TEdit;
@@ -72,10 +72,10 @@ type
 
     procedure LoadDatabases;
     procedure LoadUsers;
-    procedure ConnectToSource;
+    function ConnectToSource: boolean;
     procedure DisconnectSource;
 
-    procedure ConnectToDestination;
+    function ConnectToDestination: boolean;
     procedure DisconnectDestination;
 
     procedure ExportDB(dbName: string);
@@ -89,6 +89,7 @@ type
 
 var
   MainFrom: TMainFrom;
+  log_file: Text;
 
 implementation
 
@@ -99,6 +100,8 @@ implementation
 procedure TMainFrom.FormCreate(Sender: TObject);
 begin
   try
+    edSrcHost.Items.Add(edSrcHost.Text);
+    edDstHost.Items.Add(edSrcHost.Text);
     ConnectToSource;
     LoadDatabases;
     LoadUsers;
@@ -149,7 +152,11 @@ begin
     ProgressBar1.Max := SelectedDBCount;
     ProgressBar1.Position := 0;
     try
-      ConnectToDestination;
+      if not ConnectToDestination then
+      begin
+        Log('Cannot connect to destination server.');
+        exit;
+      end;
       for i := 0 to ItemsCount do
       begin
         if (chlDatabases.Checked[i]) then
@@ -181,18 +188,19 @@ end;
 
 procedure TMainFrom.Button1Click(Sender: TObject);
 begin
-  try
-    ConnectToDestination;
-    DisconnectDestination;
-  except
-    on e: Exception do
-    begin
-      Log('Fail to connect.');
-      Log(e.Message);
-      exit;
-    end;
+  if (edDstHost.Items.IndexOf(edDstHost.Text) < 0) then
+  begin
+    edDstHost.Items.Add(edDstHost.Text);
   end;
-  Log('Connection working propertly.');
+  if (ConnectToDestination) then
+  begin
+    DisconnectDestination;
+    Log('Connection working propertly.');
+  end
+  else
+  begin
+    Log('Fail to connect.');
+  end;
 end;
 
 procedure TMainFrom.Button3Click(Sender: TObject);
@@ -212,7 +220,11 @@ begin
     ProgressBar1.Max := SelectedUsersCount;
     ProgressBar1.Position := 0;
     try
-      ConnectToDestination;
+      if not ConnectToDestination then
+      begin
+        Log('Cannot connect to destination server.');
+        exit;
+      end;
       for i := 0 to ItemsCount do
       begin
         if (chlUsers.Checked[i]) then
@@ -242,6 +254,7 @@ begin
     on e: Exception do
     begin
       Log(e.Message);
+      DestinationT.Rollback;
       exit;
     end;
   end;
@@ -250,18 +263,19 @@ end;
 
 procedure TMainFrom.Button4Click(Sender: TObject);
 begin
-  try
-    ConnectToSource;
-    DisconnectSource;
-  except
-    on e: Exception do
-    begin
-      Log('Fail to connect.');
-      Log(e.Message);
-      exit;
-    end;
+  if (edSrcHost.Items.IndexOf(edSrcHost.Text) < 0) then
+  begin
+    edSrcHost.Items.Add(edSrcHost.Text);
   end;
-  Log('Connection working propertly.');
+  if (ConnectToSource) then
+  begin
+    DisconnectSource;
+    Log('Connection working propertly.');
+  end
+  else
+  begin
+    Log('Fail to connect.');
+  end;
 end;
 
 procedure TMainFrom.reloadDatabasesClick(Sender: TObject);
@@ -290,6 +304,8 @@ procedure TMainFrom.Log(s: string);
 begin
   Memo1.Lines.Add(s);
   Memo1.CaretPos := Point(0, Memo1.Lines.Count - 1);
+  WriteLn(log_file, s);
+  Flush(log_file);
 end;
 
 procedure TMainFrom.LoadDatabases;
@@ -338,7 +354,7 @@ begin
   end;
 end;
 
-procedure TMainFrom.ConnectToSource;
+function TMainFrom.ConnectToSource: boolean;
 begin
   SourceDB.DatabaseName := 'mysql';
   SourceDB.UserName := edSrcUser.Text;
@@ -346,16 +362,19 @@ begin
   SourceDB.HostName := edSrcHost.Text;
   SourceDB.Port := spSrcPort.Value;
 
+  Result := False;
   try
     Log('Connecting ' + SourceDB.HostName + ':' + IntToStr(SourceDB.Port));
     SourceDB.Connected := True;
     SourceT.Active := True;
     Log('Connected.');
+    Result := True;
   except
     on e: Exception do
     begin
       Log(e.Message);
       MessageDlg('Error', 'Cannot connect to server.', mtError, [mbOK], 0);
+      raise e;
     end;
   end;
 end;
@@ -367,23 +386,27 @@ begin
   Log('Disconnected.');
 end;
 
-procedure TMainFrom.ConnectToDestination;
+function TMainFrom.ConnectToDestination: boolean;
 begin
   DestinationDB.DatabaseName := 'mysql';
   DestinationDB.UserName := edDstUser.Text;
   DestinationDB.Password := edDstPass.Text;
   DestinationDB.HostName := edDstHost.Text;
   DestinationDB.Port := spDstPort.Value;
+
+  Result := False;
   try
     Log('Connecting ' + DestinationDB.HostName + ':' + IntToStr(DestinationDB.Port));
     DestinationDB.Connected := True;
     DestinationT.Active := True;
     Log('Connected.');
+    Result := True;
   except
     on e: Exception do
     begin
       Log(e.Message);
       MessageDlg('Error', 'Cannot connect to server.', mtError, [mbOK], 0);
+      raise e;
     end;
   end;
 end;
@@ -398,7 +421,7 @@ end;
 
 procedure TMainFrom.ExportDB(dbName: string);
 begin
-  DestinationQ.SQL.Text := 'CREATE DATABASE IF NOT EXISTS ' + dbName;
+  DestinationQ.SQL.Text := 'CREATE DATABASE IF NOT EXISTS ''' + dbName + '''';
   try
     DestinationQ.ExecSQL;
     DestinationQ.Close;
@@ -412,11 +435,21 @@ begin
 end;
 
 procedure TMainFrom.ExportUser(grantQ: TStringList);
+var
+  i: integer;
+  s: string;
 begin
-  DestinationQ.SQL := grantQ;
   try
-    DestinationQ.ExecSQL;
-    DestinationQ.Close;
+    Log('Exporting...');
+    for i := 0 to grantQ.Count - 1 do
+    begin
+      s := grantQ[i];
+      Log(s);
+      DestinationQ.SQL.Text := s;
+      DestinationQ.ExecSQL;
+      DestinationQ.Close;
+      Application.ProcessMessages;
+    end;
   except
     on e: Exception do
     begin
@@ -427,14 +460,19 @@ begin
 end;
 
 function TMainFrom.GetUserGrants(user: string; host: string): TStringList;
+var
+  s: string;
 begin
   Result := TStringList.Create;
   SourceQ.SQL.Text := 'SHOW GRANTS FOR ''' + user + '''@''' + host + '''';
   try
+    Log('Getting grants for ' + user + '@' + host);
     SourceQ.Open;
     while not SourceQ.EOF do
     begin
-      Result.Add(SourceQ['Grants for ' + user + '@' + host + ''] + ';');
+      s := SourceQ['Grants for ' + user + '@' + host + ''] + ';';
+      Result.Add(s);
+      Log(s);
       Application.ProcessMessages;
       SourceQ.Next;
     end;
@@ -466,5 +504,14 @@ begin
   Result := r;
 end;
 
+initialization
+
+  AssignFile(log_file, StringReplace(StringReplace(DateTimeToStr(Now),
+    ':', '_', [rfReplaceAll]), '/', '_', [rfReplaceAll]) + '.txt');
+  Rewrite(log_file);
+
+finalization
+
+  CloseFile(log_file);
 
 end.

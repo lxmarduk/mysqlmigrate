@@ -64,20 +64,12 @@ object MainFrom: TMainFrom
     TabOrder = 2
     WordWrap = False
   end
-  object edSrcHost: TEdit
-    Left = 79
-    Height = 23
-    Top = 24
-    Width = 111
-    TabOrder = 3
-    Text = '127.0.0.1'
-  end
   object edSrcUser: TEdit
     Left = 79
     Height = 23
     Top = 56
     Width = 111
-    TabOrder = 4
+    TabOrder = 3
     Text = 'root'
   end
   object edSrcPass: TEdit
@@ -87,7 +79,7 @@ object MainFrom: TMainFrom
     Width = 111
     EchoMode = emPassword
     PasswordChar = '*'
-    TabOrder = 5
+    TabOrder = 4
   end
   object Label3: TLabel
     Left = 24
@@ -119,23 +111,15 @@ object MainFrom: TMainFrom
     Top = 24
     Width = 72
     MaxValue = 65535
-    TabOrder = 6
+    TabOrder = 5
     Value = 3306
-  end
-  object edDstHost: TEdit
-    Left = 383
-    Height = 23
-    Top = 24
-    Width = 111
-    TabOrder = 7
-    Text = '127.0.0.1'
   end
   object edDstUser: TEdit
     Left = 383
     Height = 23
     Top = 56
     Width = 111
-    TabOrder = 8
+    TabOrder = 6
     Text = 'root'
   end
   object edDstPass: TEdit
@@ -145,7 +129,7 @@ object MainFrom: TMainFrom
     Width = 111
     EchoMode = emPassword
     PasswordChar = '*'
-    TabOrder = 9
+    TabOrder = 7
   end
   object Label7: TLabel
     Left = 328
@@ -177,7 +161,7 @@ object MainFrom: TMainFrom
     Top = 24
     Width = 72
     MaxValue = 65535
-    TabOrder = 10
+    TabOrder = 8
     Value = 3306
   end
   object ProgressBar1: TProgressBar
@@ -187,7 +171,7 @@ object MainFrom: TMainFrom
     Width = 614
     Smooth = True
     Step = 1
-    TabOrder = 11
+    TabOrder = 9
   end
   object reloadDatabases: TSpeedButton
     Left = 297
@@ -302,7 +286,7 @@ object MainFrom: TMainFrom
     Width = 75
     Caption = 'Export DBs'
     OnClick = Button2Click
-    TabOrder = 12
+    TabOrder = 10
   end
   object Button3: TButton
     Left = 440
@@ -311,7 +295,7 @@ object MainFrom: TMainFrom
     Width = 75
     Caption = 'Export users'
     OnClick = Button3Click
-    TabOrder = 13
+    TabOrder = 11
   end
   object Button1: TButton
     Left = 383
@@ -320,7 +304,7 @@ object MainFrom: TMainFrom
     Width = 111
     Caption = 'Test connection'
     OnClick = Button1Click
-    TabOrder = 14
+    TabOrder = 12
   end
   object Button4: TButton
     Left = 79
@@ -329,7 +313,31 @@ object MainFrom: TMainFrom
     Width = 111
     Caption = 'Test connection'
     OnClick = Button4Click
+    TabOrder = 13
+  end
+  object edSrcHost: TComboBox
+    Left = 79
+    Height = 23
+    Top = 24
+    Width = 111
+    AutoComplete = True
+    AutoCompleteText = [cbactEnabled, cbactEndOfLineComplete, cbactSearchAscending]
+    DropDownCount = 10
+    ItemHeight = 15
+    TabOrder = 14
+    Text = '127.0.0.1'
+  end
+  object edDstHost: TComboBox
+    Left = 383
+    Height = 23
+    Top = 24
+    Width = 111
+    AutoComplete = True
+    AutoCompleteText = [cbactEnabled, cbactEndOfLineComplete, cbactSearchAscending]
+    DropDownCount = 10
+    ItemHeight = 15
     TabOrder = 15
+    Text = '127.0.0.1'
   end
   object SourceQ: TSQLQuery
     FieldDefs = <>
