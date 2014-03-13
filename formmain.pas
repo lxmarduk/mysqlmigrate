@@ -68,6 +68,8 @@ type
   private
     { private declarations }
 
+    skipped: TStringList;
+
     procedure Log(s: string);
 
     procedure LoadDatabases;
@@ -84,10 +86,11 @@ type
 
     function GetCheckedItemsCount(var c: TCheckListBox): integer;
 
-    procedure ParseGrants(GrantQ: String; var Grants: TStringList; var Db: String; var Table: String);
-    function TableExists(Db: String; Table: String): Boolean;
-    function DatabaseExists(Db:String):Boolean;
-    function HasCreateOption(Grants: TStringList): Boolean;
+    procedure ParseGrants(GrantQ: string; var Grants: TStringList;
+      var Db: string; var Table: string; var User: string; var Host: string);
+    function TableExists(Db: string; Table: string): boolean;
+    function DatabaseExists(Db: string): boolean;
+    function HasCreateOption(Grants: TStringList): boolean;
   public
     { public declarations }
   end;
@@ -111,6 +114,7 @@ begin
     LoadDatabases;
     LoadUsers;
     DisconnectSource;
+    skipped := TStringList.Create;
   except
     exit;
   end;
@@ -118,7 +122,8 @@ end;
 
 procedure TMainFrom.FormDestroy(Sender: TObject);
 begin
-
+  skipped.Destroy;
+  skipped := nil;
 end;
 
 procedure TMainFrom.miDeselectAllDBClick(Sender: TObject);
@@ -235,6 +240,7 @@ begin
         Log('Cannot connect to destination server.');
         exit;
       end;
+      skipped.Clear;
       for i := 0 to ItemsCount do
       begin
         if (chlUsers.Checked[i]) then
@@ -257,6 +263,12 @@ begin
       DestinationQ.ExecSQL;
       DestinationQ.Close;
       DisconnectDestination;
+
+      for i := 0 to skipped.Count - 1 do
+      begin
+        Log(skipped[i]);
+      end;
+      Log('Total skipped grants: ' + IntToStr(skipped.Count div 2));
     except
       on e: Exception do
       begin
@@ -453,7 +465,7 @@ var
   i: integer;
   s: string;
   g: TStringList;
-  d, t: String;
+  d, t, u, h: string;
 
 begin
   try
@@ -465,20 +477,25 @@ begin
       g := TStringList.Create;
       d := '';
       t := '';
-      ParseGrants(s, g, d, t);
+      u := '';
+      h := '';
+      ParseGrants(s, g, d, t, u, h);
 
-      if not TableExists(d, t) then
-      begin
-        if not HasCreateOption(g) then
+      Log(s);
+      try
+        DestinationQ.SQL.Text := s;
+        DestinationQ.ExecSQL;
+        DestinationQ.Close;
+        Application.ProcessMessages;
+      except
+        on e: Exception do
         begin
+          Log('Skipped: `' + d + '`.`' + t + '` for user ' + u + '@' + h);
+          skipped.Add('Skipped: `' + d + '`.`' + t + '` for user ' + u + '@' + h);
+          skipped.Add('Grant: ' + s);
           continue;
         end;
       end;
-      Log(s);
-      DestinationQ.SQL.Text := s;
-      DestinationQ.ExecSQL;
-      DestinationQ.Close;
-      Application.ProcessMessages;
     end;
   except
     on e: Exception do
@@ -496,7 +513,7 @@ begin
   Result := TStringList.Create;
   SourceQ.SQL.Text := 'SHOW GRANTS FOR ''' + user + '''@''' + host + '''';
   try
-    Log('Getting grants for ' + user + '@' + host);
+    Log('Getting grants for ' + user + '@' + host + '...');
     SourceQ.Open;
     SourceQ.First;
     while not SourceQ.EOF do
@@ -504,7 +521,7 @@ begin
       s := SourceQ['Grants for ' + user + '@' + host + ''] + ';';
       SourceQ.Next;
       Result.Add(s);
-      Log(s);
+      //Log(s);
       Application.ProcessMessages;
     end;
     SourceQ.Close;
@@ -535,13 +552,14 @@ begin
   Result := r;
 end;
 
-procedure TMainFrom.ParseGrants(GrantQ: String; var Grants: TStringList;
-  var Db: String; var Table: String);
-var delim: TStringList;
-  i: Integer;
+procedure TMainFrom.ParseGrants(GrantQ: string; var Grants: TStringList;
+  var Db: string; var Table: string; var User: string; var Host: string);
+var
+  delim: TStringList;
+  i: integer;
 begin
   delim := TStringList.Create;
-  delim.StrictDelimiter := true;
+  delim.StrictDelimiter := True;
   delim.Delimiter := ' ';
   delim.DelimitedText := GrantQ;
 
@@ -559,8 +577,8 @@ begin
   i := i + 1;
   if Pos('.', delim[i]) > 0 then
   begin
-    Db := Copy(delim[i], 0, Pos('.', delim[i])-1);
-    Table := Copy(delim[i], Pos('.', delim[i])+1, 255);
+    Db := Copy(delim[i], 0, Pos('.', delim[i]) - 1);
+    Table := Copy(delim[i], Pos('.', delim[i]) + 1, 255);
 
     Db := StringReplace(Db, '`', '', [rfReplaceAll]);
     Db := StringReplace(Db, '''', '', [rfReplaceAll]);
@@ -570,27 +588,34 @@ begin
     Table := StringReplace(Table, '''', '', [rfReplaceAll]);
     Table := StringReplace(Table, '"', '', [rfReplaceAll]);
   end;
+  while UpperCase(delim[i]) <> 'TO' do
+    i := i + 1;
+
+  i := i + 1;
+  User := Copy(delim[i], 0, Pos('@', delim[i]) - 1);
+  Host := Copy(delim[i], Pos('@', delim[i]) + 1, 255);
 end;
 
-function TMainFrom.TableExists(Db: String; Table: String ): Boolean;
-var d: String;
+function TMainFrom.TableExists(Db: string; Table: string): boolean;
+var
+  d: string;
 begin
-
+  d := '';
   if (Db = '*') then
   begin
-    Result := true;
+    Result := True;
     exit;
   end;
 
   if (Table = '*') then
   begin
-    Result := true;
+    Result := True;
     exit;
   end;
 
-  if not DatabaseExists(d) then
+  if not DatabaseExists(Db) then
   begin
-    Result := false;
+    Result := False;
     exit;
   end;
 
@@ -606,10 +631,11 @@ begin
     Result := True;
 end;
 
-function TMainFrom.DatabaseExists(Db: String): Boolean;
-var f: Boolean;
+function TMainFrom.DatabaseExists(Db: string): boolean;
+var
+  f: boolean;
 begin
-  f := false;
+  f := False;
   DestinationQ.SQL.Text := 'SHOW DATABASES;';
   DestinationQ.Open;
   DestinationQ.First;
@@ -617,23 +643,26 @@ begin
   begin
     if DestinationQ['Database'] = Db then
     begin
-      f := true;
+      f := True;
       break;
     end;
     DestinationQ.Next;
   end;
   DestinationQ.Close;
+  Result := f;
 end;
 
-function TMainFrom.HasCreateOption(Grants: TStringList): Boolean;
+function TMainFrom.HasCreateOption(Grants: TStringList): boolean;
 begin
   Result := False;
   if Grants.Count > 0 then
   begin
     if Grants[0] = 'ALL' then
     begin
-      Result := true;
-    end else begin
+      Result := True;
+    end
+    else
+    begin
       Result := (Grants.IndexOf('CREATE') >= 0) or (Grants.IndexOf('CREATE_PRIV') >= 0);
     end;
   end;
