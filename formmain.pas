@@ -82,7 +82,12 @@ type
     procedure ExportUser(grantQ: TStringList);
     function GetUserGrants(user: string; host: string): TStringList;
 
-    function GetCheckedItemsCount(c: TCheckListBox): integer;
+    function GetCheckedItemsCount(var c: TCheckListBox): integer;
+
+    procedure ParseGrants(GrantQ: String; var Grants: TStringList; var Db: String; var Table: String);
+    function TableExists(Db: String; Table: String): Boolean;
+    function DatabaseExists(Db:String):Boolean;
+    function HasCreateOption(Grants: TStringList): Boolean;
   public
     { public declarations }
   end;
@@ -164,6 +169,10 @@ begin
           ExportDB(chlDatabases.Items[i]);
           Log('Exported ' + chlDatabases.Items[i]);
           ProgressBar1.Position := ProgressBar1.Position + 1;
+          ProgressBar1.Update;
+          Update;
+          Application.ProcessMessages;
+          Sleep(1);
           Application.ProcessMessages;
         end;
       end;
@@ -209,6 +218,7 @@ var
   ItemsCount: integer;
   i: integer;
   user, host, s: string;
+  sl: TStringList;
 begin
   try
     SelectedUsersCount := GetCheckedItemsCount(chlUsers);
@@ -232,9 +242,13 @@ begin
           s := chlUsers.Items[i];
           user := Copy(s, 0, Pos('@', s) - 1);
           host := Copy(s, Pos('@', s) + 1, Length(s));
-          ExportUser(GetUserGrants(user, host));
+          sl := GetUserGrants(user, host);
+          ExportUser(sl);
           Log('Exported ' + chlUsers.Items[i]);
           ProgressBar1.Position := ProgressBar1.Position + 1;
+          Sleep(1);
+          ProgressBar1.Update;
+          Update;
           Application.ProcessMessages;
         end;
       end;
@@ -255,10 +269,10 @@ begin
     begin
       Log(e.Message);
       DestinationT.Rollback;
+      ProgressBar1.Position := 0;
       exit;
     end;
   end;
-  ProgressBar1.Position := 0;
 end;
 
 procedure TMainFrom.Button4Click(Sender: TObject);
@@ -438,12 +452,28 @@ procedure TMainFrom.ExportUser(grantQ: TStringList);
 var
   i: integer;
   s: string;
+  g: TStringList;
+  d, t: String;
+
 begin
   try
     Log('Exporting...');
     for i := 0 to grantQ.Count - 1 do
     begin
       s := grantQ[i];
+
+      g := TStringList.Create;
+      d := '';
+      t := '';
+      ParseGrants(s, g, d, t);
+
+      if not TableExists(d, t) then
+      begin
+        if not HasCreateOption(g) then
+        begin
+          continue;
+        end;
+      end;
       Log(s);
       DestinationQ.SQL.Text := s;
       DestinationQ.ExecSQL;
@@ -472,10 +502,10 @@ begin
     while not SourceQ.EOF do
     begin
       s := SourceQ['Grants for ' + user + '@' + host + ''] + ';';
+      SourceQ.Next;
       Result.Add(s);
       Log(s);
       Application.ProcessMessages;
-      SourceQ.Next;
     end;
     SourceQ.Close;
   except
@@ -487,7 +517,7 @@ begin
   end;
 end;
 
-function TMainFrom.GetCheckedItemsCount(c: TCheckListBox): integer;
+function TMainFrom.GetCheckedItemsCount(var c: TCheckListBox): integer;
 var
   i: integer;
   len: integer;
@@ -497,12 +527,116 @@ begin
   len := c.Items.Count - 1;
   for i := 0 to len do
   begin
-    if c.Checked[i] then
+    if c.State[i] = cbChecked then
     begin
       r := r + 1;
     end;
   end;
   Result := r;
+end;
+
+procedure TMainFrom.ParseGrants(GrantQ: String; var Grants: TStringList;
+  var Db: String; var Table: String);
+var delim: TStringList;
+  i: Integer;
+begin
+  delim := TStringList.Create;
+  delim.StrictDelimiter := true;
+  delim.Delimiter := ' ';
+  delim.DelimitedText := GrantQ;
+
+  i := 1;
+  Grants.Clear;
+  while (UpperCase(delim[i]) <> 'ON') do
+  begin
+    delim[i] := StringReplace(delim[i], ',', '', [rfReplaceAll]);
+    delim[i] := StringReplace(delim[i], '(', '', [rfReplaceAll]);
+    delim[i] := StringReplace(delim[i], ')', '', [rfReplaceAll]);
+    delim[i] := UpperCase(delim[i]);
+    Grants.Add(delim[i]);
+    i := i + 1;
+  end;
+  i := i + 1;
+  if Pos('.', delim[i]) > 0 then
+  begin
+    Db := Copy(delim[i], 0, Pos('.', delim[i])-1);
+    Table := Copy(delim[i], Pos('.', delim[i])+1, 255);
+
+    Db := StringReplace(Db, '`', '', [rfReplaceAll]);
+    Db := StringReplace(Db, '''', '', [rfReplaceAll]);
+    Db := StringReplace(Db, '"', '', [rfReplaceAll]);
+
+    Table := StringReplace(Table, '`', '', [rfReplaceAll]);
+    Table := StringReplace(Table, '''', '', [rfReplaceAll]);
+    Table := StringReplace(Table, '"', '', [rfReplaceAll]);
+  end;
+end;
+
+function TMainFrom.TableExists(Db: String; Table: String ): Boolean;
+var d: String;
+begin
+
+  if (Db = '*') then
+  begin
+    Result := true;
+    exit;
+  end;
+
+  if (Table = '*') then
+  begin
+    Result := true;
+    exit;
+  end;
+
+  if not DatabaseExists(d) then
+  begin
+    Result := false;
+    exit;
+  end;
+
+  d := DestinationQ.DataBase.DatabaseName;
+  DestinationQ.DataBase.DatabaseName := Db;
+  DestinationQ.SQL.Text := 'SHOW TABLES LIKE ''' + Table + '''';
+  DestinationQ.Open;
+  DestinationQ.Close;
+  DestinationQ.DataBase.DatabaseName := d;
+  if DestinationQ.RecordCount <= 0 then
+    Result := False
+  else
+    Result := True;
+end;
+
+function TMainFrom.DatabaseExists(Db: String): Boolean;
+var f: Boolean;
+begin
+  f := false;
+  DestinationQ.SQL.Text := 'SHOW DATABASES;';
+  DestinationQ.Open;
+  DestinationQ.First;
+  while not DestinationQ.EOF do
+  begin
+    if DestinationQ['Database'] = Db then
+    begin
+      f := true;
+      break;
+    end;
+    DestinationQ.Next;
+  end;
+  DestinationQ.Close;
+end;
+
+function TMainFrom.HasCreateOption(Grants: TStringList): Boolean;
+begin
+  Result := False;
+  if Grants.Count > 0 then
+  begin
+    if Grants[0] = 'ALL' then
+    begin
+      Result := true;
+    end else begin
+      Result := (Grants.IndexOf('CREATE') >= 0) or (Grants.IndexOf('CREATE_PRIV') >= 0);
+    end;
+  end;
 end;
 
 initialization

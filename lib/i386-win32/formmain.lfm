@@ -170,7 +170,6 @@ object MainFrom: TMainFrom
     Top = 552
     Width = 614
     Smooth = True
-    Step = 1
     TabOrder = 9
   end
   object reloadDatabases: TSpeedButton
