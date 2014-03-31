@@ -447,7 +447,7 @@ end;
 
 procedure TMainFrom.ExportDB(dbName: string);
 begin
-  DestinationQ.SQL.Text := 'CREATE DATABASE IF NOT EXISTS ''' + dbName + '''';
+  DestinationQ.SQL.Text := 'CREATE DATABASE IF NOT EXISTS ' + dbName;
   try
     DestinationQ.ExecSQL;
     DestinationQ.Close;
